@@ -19,9 +19,8 @@ sysctl -p /etc/sysctl.d/userns.conf
 add_user()
 {
     read -p "Do you want to add a new user? [Y/n]: " answer
-    read -p "Name of the user : " sudName
     answer=${answer:Y}
-    [[ $answer =~ [Yy] ]] && adduser $sudName && usermod -aG sudo $sudName
+    [[ $answer =~ [Yy] ]] && read -p "Name of the user : " sudName && adduser $sudName && usermod -aG sudo $sudName
     usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $sudName
 
 }
@@ -30,10 +29,11 @@ add_user
 # Dependecies install / Debootstrap tarball
 dpkg -s "${installlib[@]}" >/dev/null 2>&1 || run_install
 if [ -f "$tarName" ]; then
-    echo "$FILE exists."
+    echo "$tarName exists."
     read -p "Do you want to remove the files? [Y/n]: " answer
     answer=${answer:Y}
     [[ $answer =~ [Yy] ]] && rm -rf $(tarName)
+    [[ $answer =~ [Nn] ]] && exit 0
     
 else
     read -p $'\e[33mWhich version of Debian you want to install ? (bookworm,buster,bullseye,buster,stretch) :\e[0m ' codeName
