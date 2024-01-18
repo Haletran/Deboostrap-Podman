@@ -19,18 +19,6 @@ You need to execute the install script by using :
 Those scripts will create a perfectly usable debian machine running inside a container hosted
 on your computer.
 
-If you want to access your debian machine, you need to login as <u>dpm</u>, by using the command:
-
-    sudo login dpm #the password should be created during the installation 
-
-    podman attach CONTAINER_NAME or podman exec -ti CONTAINER_NAME bash
-
-But if you want to run the container in your current user session, you need to comments those lines:
-
-    #adduser $sudName <br> #usermod -aG sudo $sudName 
-
-And change the $sudName variable by your own username ("whoami" to get it).
-
 
 # Credits
 
