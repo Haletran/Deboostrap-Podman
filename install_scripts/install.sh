@@ -1,7 +1,7 @@
 #!bin/sh
 
 # Variables
-sudName=baptiste
+sudName=$(whoami)
 tarName="Debian.tar.gz"
 installlib=("debootstrap" "dirmngr" "podman" "slirp4netns" "fuse-overlayfs")
 
