@@ -14,12 +14,6 @@ You need to execute the install script by using :
 
     sudo bash install.sh
 
-# Usage 
-
-Those scripts will create a perfectly usable debian machine running inside a container hosted
-on your computer.
-
-
 # Credits
 
 - Original Idea from @kapouer
