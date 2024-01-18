@@ -1,7 +1,6 @@
 #!bin/sh
 
 # Variables
-sudName=$(whoami)
 tarName="Debian.tar.gz"
 installlib=("debootstrap" "dirmngr" "podman" "slirp4netns" "fuse-overlayfs")
 
@@ -19,16 +18,16 @@ run_install()
     [[ $answer =~ [Yy] ]] && apt-get install ${installlib[@]}
 }
 
-echo "user.max_user_namespaces=28633" > /etc/sysctl.d/userns.conf
-sysctl -p /etc/sysctl.d/userns.conf
 
 add_user()
 {
     read -p "Do you want to add a new user? [Y/n]: " answer
     answer=${answer:Y}
     [[ $answer =~ [Yy] ]] && read -p "Name of the user : " sudName && adduser $sudName && usermod -aG sudo $sudName
+    [[ $answer =~ [Nn] ]] && read -p "Then what's your username ?" sudName
+    echo "user.max_user_namespaces=28633" > /etc/sysctl.d/userns.conf
+    sysctl -p /etc/sysctl.d/userns.conf
     usermod --add-subuids 100000-165535 --add-subgids 100000-165535 $sudName
-
 }
 
 add_user
