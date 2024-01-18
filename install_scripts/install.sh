@@ -1,9 +1,15 @@
 #!bin/sh
 
 # Variables
-sudName=$(whoami)
+sudName=baptiste
 tarName="Debian.tar.gz"
 installlib=("debootstrap" "dirmngr" "podman" "slirp4netns" "fuse-overlayfs")
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Please run this script as sudo."
+    exit 1
+fi
+
 
 #Functions
 run_install()
@@ -32,16 +38,15 @@ if [ -f "$tarName" ]; then
     echo "$tarName exists."
     read -p "Do you want to remove the files? [Y/n]: " answer
     answer=${answer:Y}
-    [[ $answer =~ [Yy] ]] && rm -rf $(tarName)
-    [[ $answer =~ [Nn] ]] && exit 0
-    
+    [[ $answer =~ [Yy] ]] && rm -rf $tarName && exit
+    #[[ $answer =~ [Nn] ]] && exit
 else
-    read -p $'\e[33mWhich version of Debian you want to install ? (bookworm,buster,bullseye,buster,stretch) :\e[0m ' codeName
+    touch dpm
+    read -p $'\e[33mWhich version of Debian you want to install ? (bookworm,buster,bullseye,buster) :\e[0m ' codeName
     debootstrap --variant=minbase --components=main,contrib,non-free-firmware --include=sudo,git,dirmngr,apt-transport-https $codeName "debian-$codeName" http://deb.debian.org/debian/
     tar --verbose --create --file $tarName --directory "debian-$codeName" .
+    sudo echo $codeName > dpm;
 fi
-
-echo $codeName > /tmp/dpm
 # launch podman import and run script as $sudName
 sudo -u  $sudName bash import.sh
 
