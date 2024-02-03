@@ -4,13 +4,13 @@
 tarName="Debian.tar.gz"
 installlib=("debootstrap" "dirmngr" "podman" "slirp4netns" "fuse-overlayfs")
 
+#Function to check if sudo
 if [ "$EUID" -ne 0 ]; then
     echo "Please run this script as sudo."
     exit 1
 fi
 
-
-#Functions
+#Libraries install if you don't have them install
 run_install()
 {
     read -p "Do you want to install missing libraries? [Y/n]: " answer
@@ -18,7 +18,8 @@ run_install()
     [[ $answer =~ [Yy] ]] && apt-get install ${installlib[@]}
 }
 
-
+#Fonction to ask if they want a specific user for container
+#Doesn't work with whoami so, obligatory to ask for username
 add_user()
 {
     read -p "Do you want to add a new user? [Y/n]: " answer
@@ -31,6 +32,8 @@ add_user()
 }
 
 add_user
+
+
 # Dependecies install / Debootstrap tarball
 dpkg -s "${installlib[@]}" >/dev/null 2>&1 || run_install
 if [ -f "$tarName" ]; then
@@ -41,12 +44,13 @@ if [ -f "$tarName" ]; then
     #[[ $answer =~ [Nn] ]] && exit
 else
     touch dpm
-    read -p $'\e[33mWhich version of Debian you want to install ? (bookworm,buster,bullseye,buster) :\e[0m ' codeName
+    read -p $'\e[33mWhich version of Debian you want to install ? (bookworm,buster,bullseye) :\e[0m ' codeName
     debootstrap --variant=minbase --components=main,contrib,non-free-firmware --include=sudo,git,dirmngr,apt-transport-https $codeName "debian-$codeName" http://deb.debian.org/debian/
     tar --verbose --create --file $tarName --directory "debian-$codeName" .
     sudo echo $codeName > dpm;
 fi
-# launch podman import and run script as $sudName
+
+# Launch ./import.sh with the name given by the user
 sudo -u  $sudName bash import.sh
 
 
