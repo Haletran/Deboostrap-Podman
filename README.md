@@ -15,7 +15,7 @@ sudo apt-get install git podman debootstrap slirp4netns fuse-overlayfs dirmngr
 
 Clone the repository :
 
-    git clone https://salsa.debian.org/bpasquier/testgitlabrunner
+    git clone https://github.com/Haletran/Deboostrap-Podman
 
 Execute the install script with elevated privileges:
 
